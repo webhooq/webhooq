@@ -1,27 +1,20 @@
 package webhooq.http.netty
 
-import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import org.jboss.netty.channel.{ChannelFuture, ChannelFutureListener, SimpleChannelHandler, MessageEvent, ExceptionEvent, ChannelStateEvent, ChannelHandlerContext, ChannelPipelineFactory, Channels, ChannelPipeline}
 import org.jboss.netty.bootstrap.ClientBootstrap
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory
 import org.jboss.netty.handler.ssl.SslHandler
 import org.jboss.netty.handler.codec.http.{HttpChunkAggregator, HttpContentDecompressor, HttpClientCodec, HttpHeaders, HttpVersion, DefaultHttpRequest}
-import java.net.{InetSocketAddress, URI}
-import java.util.concurrent.{TimeUnit, Executors}
+import java.net.InetSocketAddress
+import java.util.concurrent.Executors
 import java.security.Security
 import java.security.cert.X509Certificate
 import javax.net.ssl.{X509TrustManager, SSLContext}
-import akka.actor.ActorRef
 import webhooq.logging.WebhooqLogger
 import org.jboss.netty.channel.group.{DefaultChannelGroup, ChannelGroup}
 import webhooq.http.netty.NettyHttpConverters._
-import webhooq.http.{HttpStatus, HttpMethod, HttpRequest, HttpResponse}
-import webhooq.model.{Topic, Type}
+import webhooq.http.{HttpRequest, HttpResponse}
 
-//abstract class HttpClientResponseMessage
-//case object Canceled extends  HttpClientResponseMessage
-//case object Success extends  HttpClientResponseMessage
-//case class Err(cause:Throwable) extends  HttpClientResponseMessage
 
 object HttpClient extends WebhooqLogger {
   val channelGroup:ChannelGroup = new DefaultChannelGroup("wq-netty-client")

@@ -18,14 +18,14 @@ import webhooq.http.netty.NettyHttpConverters._
 import java.util.UUID
 import webhooq.http.netty.{RequestHandler, HttpClient}
 import webhooq.model.{Topic, Type}
-
+import webhooq.http.WebhooqHeader._
 /**
  */
 @RunWith(classOf[JUnitSuiteRunner])
 class RoundTripSpec extends Specification with WebhooqLogger with JUnit {
-  val testExchangeId = UUID.randomUUID
-  val testQueueId    = UUID.randomUUID
-  val testMessageId  = UUID.randomUUID
+  val testExchangeId  = UUID.randomUUID
+  val testQueueId     = UUID.randomUUID
+  val testMessageId   = UUID.randomUUID
   val testMessageBody = UUID.randomUUID().toString.getBytes("UTF-8")
 
   "A Round Trip" should {
@@ -60,8 +60,8 @@ class RoundTripSpec extends Specification with WebhooqLogger with JUnit {
                   e.getMessage.asInstanceOf[org.jboss.netty.handler.codec.http.HttpRequest]
                 wqLog.debug("webhook callback server received message: %s".format(request))
                 val messageId = RequestHandler.parseMessageId(request) match {
-                  case RequestHandler.NotFound  => throw  new IllegalStateException("couldn't locate '%s' header in request!".format(RequestHandler.HEADERS.MESSAGE_ID))
-                  case RequestHandler.Malformed(msg) => throw new IllegalStateException("Header '%s' was malformed in request: %s".format(RequestHandler.HEADERS.MESSAGE_ID, msg))
+                  case RequestHandler.NotFound  => throw  new IllegalStateException("couldn't locate '%s' header in request!".format(MESSAGE_ID.name))
+                  case RequestHandler.Malformed(msg) => throw new IllegalStateException("Header '%s' was malformed in request: %s".format(MESSAGE_ID.name, msg))
                   case RequestHandler.Success(id) => id
                 }
 
@@ -130,7 +130,7 @@ class RoundTripSpec extends Specification with WebhooqLogger with JUnit {
         val bindTimeout = 3
         val bindUrl = new URI("http://localhost:4667/exchange/test-%s/bind".format(testExchangeId.toString))
         val bindCallbackUrl = new URI("http://localhost:8378")
-        val bindRequest = new HttpRequest(HttpMethod.POST,bindUrl,List(RequestHandler.HEADERS.QUEUE -> testQueueId.toString, RequestHandler.HEADERS.LINK -> "<%s>; rel=\"wq\"".format(bindCallbackUrl.toASCIIString), RequestHandler.HEADERS.ROUTING_KEY -> "a.*.c"))
+        val bindRequest = new HttpRequest(HttpMethod.POST,bindUrl,List(QUEUE.name -> testQueueId.toString, LINK.name -> "<%s>; rel=\"wq\"".format(bindCallbackUrl.toASCIIString), ROUTING_KEY.name -> "a.*.c"))
         HttpClient.blockingCall(bindRequest,bindTimeout*1000) match {
           case None =>
             fail("Bind response timed out after %d seconds ".format(bindTimeout))
@@ -147,8 +147,8 @@ class RoundTripSpec extends Specification with WebhooqLogger with JUnit {
         val publishUrl = new URI("http://localhost:4667/exchange/test-%s/publish".format(testExchangeId.toString))
         wqLog.info("Body Should be MD5(%s)".format(util.Utils.md5(testMessageBody)))
         val publishHeaders = List(
-          RequestHandler.HEADERS.MESSAGE_ID -> testMessageId.toString,
-          RequestHandler.HEADERS.ROUTING_KEY -> "a.b.c",
+          MESSAGE_ID.name -> testMessageId.toString,
+          ROUTING_KEY.name -> "a.b.c",
           HttpHeader.CONTENT_LENGTH.name -> testMessageBody.length.toString
         )
         val publishRequest = new HttpRequest(HttpMethod.POST,publishUrl,publishHeaders, testMessageBody)

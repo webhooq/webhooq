@@ -19,7 +19,6 @@ class HazelcastQueueLister[T] (val queue:BlockingQueue[T], val actorConstruction
     case Listen =>
       if (!running) {
         running = true
-//        val actor = actorConstructionCallback(context)
         if (wqLog.isDebugEnabled) wqLog.debug("entering incoming queue listen loop")
         while(!this.shutdown) {
           if (wqLog.isDebugEnabled) wqLog.debug("listening...")

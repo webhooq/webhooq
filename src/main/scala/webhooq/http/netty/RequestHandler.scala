@@ -13,10 +13,9 @@ import webhooq.model.dao.Message
 import webhooq.model.dao.Incoming
 import webhooq.http.netty.NettyHttpConverters._
 import webhooq.http.{HttpHeader, HttpStatus, HttpResponse, HttpMethod, HttpRequest}
-
+import webhooq.http.WebhooqHeader._
+import webhooq.http.HttpHeader._
 /**
- *
- *
  */
 class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandler with WebhooqLogger {
   import RequestHandler._
@@ -159,7 +158,6 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
         } else {
           Schema.exchange_arguments.remove(exchangeRef)
           RESPONSE.no_content()
-//          new HttpResponse(HttpStatus.NO_CONTENT(),List[(String,String)](HttpHeader.CONTENT_LENGTH.name ->  0.toString))
         }
       }
     }
@@ -197,7 +195,6 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
             Schema.queue_arguments.put(queueRef,arg)
           }
           RESPONSE.created()
-//          new HttpResponse(HttpStatus.CREATED(),List[(String,String)](HttpHeader.CONTENT_LENGTH.name ->  0.toString))
         }
       }
     }
@@ -306,12 +303,12 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
       case (NotFound, _, _, _)       => RESPONSE.badRequest("Host header missing from request. A Host header is needed to crate a binding.")
       case (_, NotFound, _, _)       => RESPONSE.badRequest("Missing Exchange name, expected 'POST /exchange/:exchange_name' where :exchange_name is the name of the exchange to create.")
       case (_, _, NotFound, _)       => RESPONSE.badRequest("This should never happen!")
-      case (_, _, _, NotFound)       => RESPONSE.badRequest("Routing key header '%s' is required to crate a binding".format(HEADERS.ROUTING_KEY))
+      case (_, _, _, NotFound)       => RESPONSE.badRequest("Routing key header '%s' is required to crate a binding".format(ROUTING_KEY.name))
       case (Malformed(msg), _, _, _) => RESPONSE.badRequest("Host header failed to parse. A Host header is needed to crate a binding.. See rfc2616 section 14.23.")
       case (_, Malformed(msg), _, _) => RESPONSE.badRequest("Missing Exchange name, expected 'POST /exchange/:exchange_name' where :exchange_name is the name of the exchange to create.")
       case (_, _, Malformed(msg), _) => RESPONSE.badRequest(msg)
       case (_, _, _, Malformed(msg)) => RESPONSE.badRequest(msg)
-//      case (_, _, _, _, Malformed(msg)) => RESPONSE.badRequest(malformedHeader(HEADERS.LINK,msg))
+//      case (_, _, _, _, Malformed(msg)) => RESPONSE.badRequest(malformedHeader(LINK.name,msg))
       case (Success(vhost), Success(exchange), Success(bind), Success(routing_key)) =>
         doBind(vhost,exchange,bind,routing_key)
     }
@@ -357,12 +354,12 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
 
     (parseMessageId(request), parseVirtualHost(request), parseExchange(exchange_name),parseRoutingKey(request)) match {
       case (Malformed(_), _, _, _) =>
-        RESPONSE.badRequest("The '%s' header contained a value that failed to parse into a valid java.util.UUID instance".format(HEADERS.MESSAGE_ID))
+        RESPONSE.badRequest("The '%s' header contained a value that failed to parse into a valid java.util.UUID instance".format(MESSAGE_ID.name))
       case (Success(message_id), _, _, _) if (Schema.messages.containsKey(message_id)) =>
-        RESPONSE.badRequest("The '%s' header contains a UUID value that is already in use. Please use a different".format(HEADERS.MESSAGE_ID))
+        RESPONSE.badRequest("The '%s' header contains a UUID value that is already in use. Please use a different".format(MESSAGE_ID.name))
       case (_, NotFound, _, _) => RESPONSE.badRequest("Host header missing from request. A Host header is needed to publish a message.")
       case (_, _, NotFound, _) => RESPONSE.badRequest("Missing Exchange name, expected 'POST /exchange/:exchange_name/publish' where :exchange_name is the name of the exchange to publish the message to.")
-      case (_, _, _, NotFound) => RESPONSE.badRequest("Routing key header '%s' is required to publish a message".format(HEADERS.ROUTING_KEY))
+      case (_, _, _, NotFound) => RESPONSE.badRequest("Routing key header '%s' is required to publish a message".format(ROUTING_KEY.name))
       case (_, Malformed(msg), _, _) => RESPONSE.badRequest("Host header failed to parse. A Host header is needed to publish a message. See rfc2616 section 14.23.")
       case (_, _, Malformed(msg), _) => RESPONSE.badRequest("Exchange name failed to parse, expected 'POST /exchange/:exchange_name/publish' where :exchange_name can be any URL-safe string")
       case (_, _, _, Malformed(msg)) => RESPONSE.badRequest(msg)
@@ -386,20 +383,6 @@ object RequestHandler {
   final case object NotFound                 extends ParseHeaderResult[Nothing]
   final case class  Malformed(message:String) extends ParseHeaderResult[Nothing]
   final case class  Success[A](value:A)       extends ParseHeaderResult[A]
-
-  /**
-   * a collection of HTTP headers we use.
-   */
-  object HEADERS {
-    val HOST = HttpHeader.HOST.name
-    val EXCHANGE     = "x-wq-exchange"    // exchange_name
-    val QUEUE        = "x-wq-queue"       // queue_name
-    val ROUTING_KEY  = "x-wq-routing-key" // an AMQP routing key
-    val LINK         = "x-wq-link"        // an RFC-5988 Link Header value
-    val MESSAGE_ID   = "x-wq-msg-id"      // UUID
- //   val ARGS_HEADERS = "x-wq-arg-headers" // Header1;Header2;Header3 -- Headers must also be included in bind
-    //    val ARRIVED_AT   = "x-wq-arrived-at"  // the time this request arrived at
-  }
 
   /**
    * a collection of error handeling functions.
@@ -434,13 +417,13 @@ object RequestHandler {
     }
 
   }
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
   /**
    *  if a message id was sent, it must be a valid UUID.
    *  if no message id is given, generate a random one, if one is given, parse it into an instance of UUID
    */
   def parseMessageId(request:HttpRequest):ParseHeaderResult[UUID] =
-    request.getHeader(HEADERS.MESSAGE_ID) match {
+    request.getHeader(MESSAGE_ID.name) match {
       case Some(s) => Option(UUID.fromString(s)) match {
         case Some(uuid) => Success(uuid)
         case None       => Malformed("Malformed UUID")
@@ -450,7 +433,7 @@ object RequestHandler {
 
   // TODO: Make Routing Keys parser
   def parseRoutingKey(request:HttpRequest):ParseHeaderResult[String] = //parseStringHeaderValue(request, "x-wq-rkey")
-    request.getHeader(HEADERS.ROUTING_KEY) match {
+    request.getHeader(ROUTING_KEY.name) match {
       case Some(rkey) => Success(rkey)
       case None       => NotFound
     }
@@ -458,7 +441,7 @@ object RequestHandler {
   /**
     */
   def parseVirtualHost(request:HttpRequest):ParseHeaderResult[String] =
-    request.getHeader(HEADERS.HOST) match {
+    request.getHeader(HOST.name) match {
       case Some(vhost) => Success(vhost)
       case None        => NotFound
     }
@@ -473,7 +456,7 @@ object RequestHandler {
   }
 
   def parseExchangeHeader() (request:HttpRequest):ParseHeaderResult[String] =
-    request.getHeader(HEADERS.EXCHANGE).map(parseExchange(_)).getOrElse(NotFound)
+    request.getHeader(EXCHANGE.name).map(parseExchange(_)).getOrElse(NotFound)
 
 
   /**
@@ -485,12 +468,12 @@ object RequestHandler {
   }
 
   def parseQueueHeader() (request:HttpRequest):ParseHeaderResult[String] =
-    request.getHeader(HEADERS.QUEUE).map(parseExchange(_)).getOrElse(NotFound)
+    request.getHeader(QUEUE.name).map(parseExchange(_)).getOrElse(NotFound)
 
   /**
     */
   def parseLink(request:HttpRequest):ParseHeaderResult[Link] =
-    request.getHeader(HEADERS.LINK) match {
+    request.getHeader(LINK.name) match {
       case None => NotFound
       case Some(exchangeValue) =>  LinkValueParser.parse(exchangeValue) match {
         case Left(error)       =>  Malformed(error)
@@ -502,29 +485,28 @@ object RequestHandler {
   /**
     */
   def parseBind(request:HttpRequest):ParseHeaderResult[Either[String,(String,Link)]] = {
-    (request.getHeader(HEADERS.EXCHANGE), request.getHeader(HEADERS.QUEUE), request.getHeader(HEADERS.LINK)) match {
-      case (None          , None       , _         ) => Malformed("A bind requires that either an '%s' header or a '%s' be defined.".format(HEADERS.EXCHANGE, HEADERS.QUEUE))
-      case (None          , Some(_)    , None      ) => Malformed("A bind to a queue requires both a '%s' header and a '%s' header be defined.".format(HEADERS.QUEUE, HEADERS.LINK))
-      case (None          , Some(queue), Some(_)   ) if !SAFE_URL_NAME_PATTERN.matcher(queue).matches() => Malformed("Header '%s' did not contain a valid queue name.".format(HEADERS.QUEUE))
-      case (Some(exchange), None       , None      ) if !SAFE_URL_NAME_PATTERN.matcher(exchange).matches() => Malformed("Header '%s' did not contain a valid exchange name.".format(HEADERS.EXCHANGE))
+    (request.getHeader(EXCHANGE.name), request.getHeader(QUEUE.name), request.getHeader(LINK.name)) match {
+      case (None          , None       , _         ) => Malformed("A bind requires that either an '%s' header or a '%s' be defined.".format(EXCHANGE.name, QUEUE.name))
+      case (None          , Some(_)    , None      ) => Malformed("A bind to a queue requires both a '%s' header and a '%s' header be defined.".format(QUEUE.name, LINK.name))
+      case (None          , Some(queue), Some(_)   ) if !SAFE_URL_NAME_PATTERN.matcher(queue).matches() => Malformed("Header '%s' did not contain a valid queue name.".format(QUEUE.name))
+      case (Some(exchange), None       , None      ) if !SAFE_URL_NAME_PATTERN.matcher(exchange).matches() => Malformed("Header '%s' did not contain a valid exchange name.".format(EXCHANGE.name))
       case (None          , Some(queue), Some(link)) =>  LinkValueParser.parse(link) match {
         case Left(error)       =>  Malformed(error)
-        case Right(Nil)        =>  Malformed("Header '%s' contained an empty link list".format(HEADERS.LINK))
+        case Right(Nil)        =>  Malformed("Header '%s' contained an empty link list".format(LINK.name))
         case Right(header)     =>  Success(Right(queue -> Link(header)))
       }
       case (Some(exchange), None, None)  => Success(Left(exchange))
 
     }
   }
+//---------------------------------------------------------------------------
 
-  //---------------------------------------------------------------------------
-
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
   def isValidExchangeType (key:String, value:String): Boolean = {
     Type.name == key && ExchangeType.parse(value).isDefined
   }
   def isValidExchangeType (arguments: Map[String, String]):Boolean = {
     arguments.find(t => isValidExchangeType(t._1,t._2)).isDefined
   }
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 }

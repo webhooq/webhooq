@@ -4,12 +4,14 @@ import org.junit.runner.RunWith
 import org.specs.runner.{JUnit, JUnitSuiteRunner}
 import org.specs.Specification
 import webhooq.logging.WebhooqLogger
-import webhooq.http.{HttpHeader, HttpMethod, SaveRequestByUuidInPathHttpServer, HttpStatus, HttpResponse, HttpRequest, HttpServer}
+import webhooq.http.{HttpHeader, HttpMethod, SaveRequestByUuidInPathHttpServer, HttpStatus, HttpRequest}
 
 import java.util.UUID
 import java.net.URI
 import webhooq.model.{Direct, Fanout, Topic, ExchangeType, Type}
 import webhooq.http.netty.{RequestHandler, HttpClient}
+
+import webhooq.http.WebhooqHeader._
 
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 
@@ -82,7 +84,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val message = UUID.randomUUID()
       val messageBody = message.toString.getBytes("UTF-8")
 
-      publish(exchange_A, "a.b.c.d", Map(RequestHandler.HEADERS.MESSAGE_ID -> message.toString), messageBody)
+      publish(exchange_A, "a.b.c.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
       Thread.sleep(1 * 1000)
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
@@ -105,7 +107,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val message = UUID.randomUUID()
 
       val messageBody = message.toString.getBytes("UTF-8")
-      publish(exchange_A, "b.c.d.a", Map(RequestHandler.HEADERS.MESSAGE_ID -> message.toString), messageBody)
+      publish(exchange_A, "b.c.d.a", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
       Thread.sleep(1 * 1000)
 
@@ -123,7 +125,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val message = UUID.randomUUID()
 
       val messageBody = message.toString.getBytes("UTF-8")
-      publish(exchange_A, "a.b", Map(RequestHandler.HEADERS.MESSAGE_ID -> message.toString), messageBody)
+      publish(exchange_A, "a.b", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
       Thread.sleep(1 * 1000)
 
@@ -142,7 +144,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val message = UUID.randomUUID()
 
       val messageBody = message.toString.getBytes("UTF-8")
-      publish(exchange_A, "a.c.b.d", Map(RequestHandler.HEADERS.MESSAGE_ID -> message.toString), messageBody)
+      publish(exchange_A, "a.c.b.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
       Thread.sleep(1 * 1000)
 
@@ -162,7 +164,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val message = UUID.randomUUID()
 
       val messageBody = message.toString.getBytes("UTF-8")
-      publish(exchange_A, "a.z.c.d", Map(RequestHandler.HEADERS.MESSAGE_ID -> message.toString), messageBody)
+      publish(exchange_A, "a.z.c.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
       Thread.sleep(1 * 1000)
 
@@ -183,7 +185,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val message = UUID.randomUUID()
 
       val messageBody = message.toString.getBytes("UTF-8")
-      publish(exchange_A, "a.b.z.d", Map(RequestHandler.HEADERS.MESSAGE_ID -> message.toString), messageBody)
+      publish(exchange_A, "a.b.z.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
       Thread.sleep(1 * 1000)
 
@@ -236,14 +238,14 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
     val headers = destination match {
       case Left(id) =>
         List(
-          RequestHandler.HEADERS.EXCHANGE -> id.toString,
-          RequestHandler.HEADERS.ROUTING_KEY -> routing_key
+          EXCHANGE.name -> id.toString,
+          ROUTING_KEY.name -> routing_key
         )
       case Right(t) =>
         List(
-          RequestHandler.HEADERS.QUEUE -> t._1.toString,
-          RequestHandler.HEADERS.LINK -> "<%s>; rel=\"wq\"".format(t._2.toASCIIString),
-          RequestHandler.HEADERS.ROUTING_KEY -> routing_key
+          QUEUE.name -> t._1.toString,
+          LINK.name -> "<%s>; rel=\"wq\"".format(t._2.toASCIIString),
+          ROUTING_KEY.name -> routing_key
         )
     }
     val bindRequest = new HttpRequest(HttpMethod.POST,bindUrl,headers)
@@ -261,7 +263,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
   def publish(exchange:UUID, routing_key:String, headers:Map[String,String], message:Array[Byte]) = {
     val publishTimeout = 3
     val publishUrl = new URI("http://localhost:4667/exchange/%s/publish".format(exchange.toString))
-    val publishHeaders = headers + (RequestHandler.HEADERS.ROUTING_KEY -> routing_key) + (HttpHeader.CONTENT_LENGTH.name -> message.length.toString)
+    val publishHeaders = headers + (ROUTING_KEY.name -> routing_key) + (HttpHeader.CONTENT_LENGTH.name -> message.length.toString)
     val publishRequest = new HttpRequest(HttpMethod.POST,publishUrl,publishHeaders.toList, message)
     wqLog.info("Sending request: %s".format(publishRequest.toString))
 
