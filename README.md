@@ -15,7 +15,7 @@ Webhooq Goals
 
 Building Webhooq
 ----------------
-Assemble an executable jar
+Assemble an executable jar.
 `mvn clean compile test assembly:single`
 
 
@@ -71,7 +71,7 @@ Publishing
 Publishing is always done to an exchange.
 Publishing is always asynchronous.
 
-Publish a message (the contents of mess.txt) to an exchange (my-exchange) with a routing key (a.b.c.d)
+Publish a message (the contents of mess.txt) to an exchange (my-exchange) with a routing key (a.b.c.d).
 `cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange`
 
 
