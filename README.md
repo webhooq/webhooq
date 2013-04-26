@@ -1,5 +1,5 @@
 Webhooq Goals
-=============
+-------------
    *   Nodes are designed to be ephemeral, storing all data in the main memories of commodity servers.
    *   Messages are replicated over multiple nodes. Only a failure of all nodes simultaneously will result in data loss. Replication factor is tunable.
    *   Symmetrical system design, no master/slave configuration. All nodes are treated equally in the cluster.
@@ -13,30 +13,36 @@ Webhooq Goals
 
 
 
-Building
-========
+Building Webhooq
+----------------
 Assemble an executable jar
 `mvn clean compile test assembly:single`
 
 
 
-Running
-=======
-Start webhooq on default port of 8080
+Running Webhooq
+---------------
+Start webhooq on default port of 8080.
 `java -jar target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
-Start webhooq on a different port (e.g 9090)
+Start webhooq on a different port (e.g 9090).
 `java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar`
 
 
 
-Using
-=====
+Using Webhook
+-------------
+Webhooq uses the same primatives as AMQP: Exchanges, Queues and Routing Keys.
+Exchanges come in three types: direct, topic, and fanout.
+Exchanges and Queues are identified by a URL-safe name.
+Queues are bound to an Exchange with a routing key.
+Messages are published to an exchange with a routing key.
+
 
 Exchanges
 ---------
-Declare an exchange (e.g. my-exchange). Declaring an exchange that already exists will fail.
-`curl -v  -X POST http://localhost:8080/exchange/my-exchange`
+Declare a topic exchange (e.g. my-exchange). Declaring an exchange that already exists will fail.
+`curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic`
 
 Delete an exchange (e.g. my-exchange). Deleting an exchange that does not exist will fail.
 `curl -v  -X DELETE http://localhost:8080/exchange/my-exchange`
