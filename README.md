@@ -1,10 +1,10 @@
-Webhooq
-=======
+Webhooq Goals
+=============
    *   Stores all of its data in the main memories of commodity servers.
    *   Messages are replicated over multiple nodes. Only a failure of all nodes simultaneously will result in data loss. Replication factor is tunable.
    *   Symmetrical system design, no master/slave configuration. All nodes are treated equally in the cluster.
    *   Consistency is overseen by a dynamically elected coordinator via Hazelcast
-   *   Nodes are designed to be ephemeral. Disk storage only used for temporary queue overflow.
+   *   Nodes are designed to be ephemeral.
    *   Additional throughput, redundancy, and capacity can be increased simply by adding additional webhooq instances to the cluster.
    *   No protocol-specific client. Simple HTTP interface, albeit not idiomatic REST, but rather a combination of URL and HTTP headers. Message delivery is done via webhooks registered at queue bind time, rather than a dedicated connection as with AMQP. A benefit of this approach  is that webhooq will be more resilient to network volatility than a dedicated connection would be. A drawback of this approach is that webhooq is near-real-time(delivery within milliseconds) rather than real-time (as with a dedicated socket).
    *   AMQP inspired model, with exchanges, queues, and routing keys, including wildcard(*) and match-any (#) matching.
