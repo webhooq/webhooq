@@ -34,13 +34,9 @@ Start webhooq on a different port (e.g 9090).
 Using Webhook
 -------------
 Webhooq uses the same primatives as AMQP: Exchanges, Queues and Routing Keys.
-
 Exchanges come in three types: direct, topic, and fanout.
-
 Exchanges and Queues are identified by a URL-safe name.
-
 Queues are bound to an Exchange with a routing key.
-
 Messages are published to an exchange with a routing key.
 
 
