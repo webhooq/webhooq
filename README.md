@@ -7,7 +7,7 @@ Webhooq Goals
    *   Nodes are designed to be ephemeral.
    *   Additional throughput, redundancy, and capacity can be increased simply by adding additional webhooq instances to the cluster.
    *   No protocol-specific client. Simple HTTP interface, albeit not idiomatic REST, but rather a combination of URL and HTTP headers. Message delivery is done via webhooks registered at queue bind time, rather than a dedicated connection as with AMQP. A benefit of this approach  is that webhooq will be more resilient to network volatility than a dedicated connection would be. A drawback of this approach is that webhooq is near-real-time(delivery within milliseconds) rather than real-time (as with a dedicated socket).
-   *   AMQP inspired model, with exchanges, queues, and routing keys, including wildcard(*) and match-any (#) matching.
+   *   AMQP inspired model, with exchanges (direct, topic, fanout), queues, and routing keys, including wildcards matching (*, #).
    *   Message Messages live for up to 12 hours.
    *   Messages must be 64 kilobytes or less in size.
    *   Messages are delivered once. Message duplication is done within webhooq, eliminating the need for consumers to consult an auxiliary deduplication cache. Once webhooq receives an HTTP 2xx status code response from your webhook, a message is considered delivered. Webhooq will requeue any message that fails delivery.
