@@ -61,10 +61,10 @@ Binding
 Exchanges can be bound to queues or other exchanges.
 
 Bind an exchange (my-source) to another exchange (my-dest) using a routing key (a.*.*.d). Messages published to the source exchange that match the routing key will be delivered to the destination exchange.
-`curl -v -X POST -H 'x-wq-dest:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind`
+`curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind`
 
 Bind an exchange (my-exchange) to a queue (my-queue) using a routing key (a.b.c.d) and the callback url (http://my-site.com). Messages published to the exchange that match the routing key will be delivered to the callback link.
-`curl -v -X POST -H 'x-wq-queue:my-queue' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind`
+`curl -v -X POST -H 'x-wq-queue:my-dest 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind`
 
 Publishing
 ----------
