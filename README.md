@@ -27,8 +27,9 @@ Development is focused on providing a complete implementation of the goals liste
 Building Webhooq
 ================
 Assemble an executable jar.
-
-```mvn clean compile test assembly:single```
+```
+mvn clean compile test assembly:single
+```
 
 
 
@@ -37,12 +38,15 @@ Running Webhooq
 ===============
 Start webhooq on default port of 8080.
 
-```java -jar target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar```
+```
+java -jar target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
 
 
 Start webhooq on a different port (e.g 9090).
-
-```java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar```
+```
+java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
 
 
 
@@ -59,9 +63,9 @@ Using Webhook
 Exchanges
 ---------
 Declare a topic exchange (e.g. my-exchange).
-
-```curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic```
-
+```
+curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
+```
 Result:
 
 | Code | Reason                                     |
@@ -71,9 +75,9 @@ Result:
 
 
 Delete an exchange (e.g. my-exchange).
-
-```curl -v  -X DELETE http://localhost:8080/exchange/my-exchange```
-
+```
+curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
+```
 Result:
 
 | Code | Reason                                    |
@@ -85,9 +89,9 @@ Result:
 Queues
 ------
 Declare an exchange (e.g. my-queue).
-
-```curl -v  -X POST http://localhost:8080/queue/my-queue```
-
+```
+curl -v  -X POST http://localhost:8080/queue/my-queue
+```
 Result:
 
 | Code | Reason                                 |
@@ -96,9 +100,9 @@ Result:
 |  400 | Declaring a queue that already exists. |
 
 Delete an exchange (e.g. my-exchange).
-
-```curl -v  -X DELETE http://localhost:8080/queue/my-queue```
-
+```
+curl -v  -X DELETE http://localhost:8080/queue/my-queue
+```
 Result:
 
 | Code | Reason                                |
@@ -112,9 +116,9 @@ Binding
 Exchanges can be bound to queues or other exchanges.
 
 Bind an exchange (my-source) to another exchange (my-dest) using a routing key (a.*.*.d). Messages published to the source exchange that match the routing key will be delivered to the destination exchange.
-
-```curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind```
-
+```
+curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind
+```
 Result:
 
 | Code | Reason                                                                                             |
@@ -124,9 +128,9 @@ Result:
 
 
 Bind an exchange (my-exchange) to a queue (my-queue) using a routing key (a.b.c.d) and the callback url (http://my-site.com). Messages published to the exchange that match the routing key will be delivered to the callback link.
-
-```curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind```
-
+```
+curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind
+```
 Result:
 
 | Code | Reason                                                                                             |
