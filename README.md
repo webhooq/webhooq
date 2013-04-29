@@ -1,4 +1,3 @@
-*************
 Webhooq Goals
 =============
    *   Nodes are designed to be ephemeral, storing all data in the main memories of commodity servers.
@@ -15,15 +14,18 @@ Webhooq Goals
 
 
 
-******
+***
+
+
 Status
 ======
 Webhooq follows a 'release early, release often' development model. We are just finishing the PoC phase, there are and will be bugs. Today, we are not production-ready.
 Development is focused on providing a complete implementation of the goals listed above first even if it affects performance initially.
 
 
+***
 
-****************
+
 Building Webhooq
 ================
 Assemble an executable jar.
@@ -31,9 +33,9 @@ Assemble an executable jar.
 mvn clean compile test assembly:single
 ```
 
+***
 
 
-***************
 Running Webhooq
 ===============
 Start webhooq on default port of 8080.
@@ -48,11 +50,11 @@ Start webhooq on a different port (e.g 9090).
 java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
 
+***
 
 
-*************
 Using Webhook
-=============
+-------------
    *   Webhooq uses AMQP-inspired primitives: Exchanges, Queues and Routing Keys.
    *   Exchanges come in three types: direct, topic, and fanout.
    *   Exchanges and Queues are identified by a URL-safe name string.
@@ -60,11 +62,10 @@ Using Webhook
    *   Messages are published to an Exchange with a Routing Key.
 
 
-Exchanges
----------
+###-H3 Exchanges
 
-Declare a topic exchange.
-### H5
+
+###-H5 Declare a topic exchange.
 
 | Method | URL                                                               |
 |--------|-------------------------------------------------------------------|
@@ -92,7 +93,9 @@ curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 ```
 
 
-Delete an exchange (e.g. my-exchange).
+###-H5 Delete an exchange
+
+A cURL example (e.g. Delete an exchange named `my-exchange`):
 ```
 curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 ```
