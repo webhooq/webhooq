@@ -75,7 +75,6 @@ Declare a topic exchange.
 | `:exchange-name` | A URL-safe id of the exchange to create                           |
 | `:exchange-type` | The type of exchange to create, must be direct, fanout, or topic. |
 
-|------------------|-------------------------------------------------------------------|
 | Headers          | Description                                                       |
 |------------------|-------------------------------------------------------------------|
 | Host             | Used to partition data.                                           |
