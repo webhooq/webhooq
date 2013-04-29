@@ -64,20 +64,20 @@ Exchanges
 ---------
 
 Declare a topic exchange.
-------------------------- H5
-
-URL:
+######################### H5
 
 | Method | URL                                                               |
 |--------|-------------------------------------------------------------------|
 |  POST  | http://localhost:8080/exchange/:exchange-name?type=:exchange-type |
 
-Paramaters:
-
+| Paramaters       | Description                                                       |
 |------------------|-------------------------------------------------------------------|
 | `:exchange-name` | A URL-safe id of the exchange to create                           |
 | `:exchange-type` | The type of exchange to create, must be direct, fanout, or topic. |
 
+| Headers          | Description             |
+|------------------|-------------------------|
+| Host             | Used to partition data. |
 
 Result:
 
