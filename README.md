@@ -53,11 +53,11 @@ java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.ja
 *************
 Using Webhook
 =============
-   *   Webhooq uses the same primatives as AMQP: Exchanges, Queues and Routing Keys.
+   *   Webhooq uses AMQP-inspired primitives: Exchanges, Queues and Routing Keys.
    *   Exchanges come in three types: direct, topic, and fanout.
-   *   Exchanges and Queues are identified by a URL-safe name.
-   *   Queues are bound to an Exchange with a routing key.
-   *   Messages are published to an exchange with a routing key.
+   *   Exchanges and Queues are identified by a URL-safe name string.
+   *   Queues are bound to an Exchange with a Routing Key.
+   *   Messages are published to an Exchange with a Routing Key.
 
 
 Exchanges
@@ -150,7 +150,7 @@ cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.
 ```
 Result:
 
-| code | Reason                                            |
+| Code | Reason                                            |
 |------|---------------------------------------------------|
 |  202 | Accepted`                                         |
 |  400 | If Routing Key or Exchange are missing/malformed. |
