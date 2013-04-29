@@ -63,6 +63,20 @@ Using Webhook
 Exchanges
 ---------
 Declare a topic exchange (e.g. my-exchange).
+
+URL:
+
+| Method | URL                                                               |
+|--------|-------------------------------------------------------------------|
+|: POST :| http://localhost:8080/exchange/:exchange-name?type=:exchange-type |
+
+Paramaters:
+
+| :exchange-name | A URL-safe id of the exchange to create                           |
+| :exchange-type | The type of exchange to create, must be direct, fanout, or topic. |
+
+cURL example:
+
 ```
 curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 ```
