@@ -56,20 +56,20 @@ Using Webhook
 ### Exchanges
 
 
-##### Declare a topic exchange.
+##### Declare an exchange.
 
 | Method | URL                                                               |
 |--------|-------------------------------------------------------------------|
 |  POST  | http://localhost:8080/exchange/:exchange-name?type=:exchange-type |
 
-| Paramaters       | Description                                                       |
-|------------------|-------------------------------------------------------------------|
-| `:exchange-name` | A URL-safe id of the exchange to create                           |
-| `:exchange-type` | The type of exchange to create, must be direct, fanout, or topic. |
+| Paramaters       | Description                                                             |
+|------------------|-------------------------------------------------------------------------|
+| `:exchange-name` | A URL-safe id of the exchange to create.                                |
+| `:exchange-type` | The type of exchange to create, must be `direct`, `fanout`, or `topic`. |
 
-| Headers          | Description                                                       |
-|------------------|-------------------------------------------------------------------|
-| Host             | Used to partition data.                                           |
+| Headers          | Description             |
+|------------------|-------------------------|
+| `Host`           | Used to partition data. |
 
 Result:
 
@@ -86,16 +86,29 @@ curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 
 ##### Delete an exchange
 
-A cURL example (e.g. Delete an exchange named `my-exchange`):
-```
-curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
-```
+| Method | URL                                                               |
+|--------|-----------------------------------------------|
+| DELETE | http://localhost:8080/exchange/:exchange-name |
+
+| Paramaters       | Description                              |
+|------------------|------------------------------------------|
+| `:exchange-name` | A URL-safe id of the exchange to delete. |
+
+| Headers          | Description             |
+|------------------|-------------------------|
+| `Host`           | Used to partition data. |
+
 Result:
 
 | Code | Reason                                    |
 |------|-------------------------------------------|
 |  204 | No Content                                |
 |  404 | Deleting an exchange that does not exist. |
+
+A cURL example (e.g. Delete an exchange named `my-exchange`):
+```
+curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
+```
 
 
 ### Queues
