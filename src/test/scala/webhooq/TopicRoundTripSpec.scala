@@ -86,7 +86,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
 
       publish(exchange_A, "a.b.c.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
-      Thread.sleep(1 * 1000)
+      Thread.sleep(2 * 1000)
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
       if (requestKeys.size != 7) fail("did not get the expected delivery. dumping keys: [%s]".format(requestKeys.mkString(",")))
       requestKeys.mustContain(queue_1)
@@ -109,7 +109,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val messageBody = message.toString.getBytes("UTF-8")
       publish(exchange_A, "b.c.d.a", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
-      Thread.sleep(1 * 1000)
+      Thread.sleep(2 * 1000)
 
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
       if (requestKeys.size != 1) fail("did not get the expected delivery. dumping keys: [%s]".format(requestKeys.mkString(",")))
@@ -127,7 +127,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val messageBody = message.toString.getBytes("UTF-8")
       publish(exchange_A, "a.b", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
-      Thread.sleep(1 * 1000)
+      Thread.sleep(2 * 1000)
 
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
       if (requestKeys.size != 3) fail("did not get the expected delivery. dumping keys: [%s]".format(requestKeys.mkString(",")))
@@ -146,7 +146,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val messageBody = message.toString.getBytes("UTF-8")
       publish(exchange_A, "a.c.b.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
-      Thread.sleep(1 * 1000)
+      Thread.sleep(2 * 1000)
 
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
       if (requestKeys.size != 4) fail("did not get the expected delivery. dumping keys: [%s]".format(requestKeys.mkString(",")))
@@ -166,7 +166,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val messageBody = message.toString.getBytes("UTF-8")
       publish(exchange_A, "a.z.c.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
-      Thread.sleep(1 * 1000)
+      Thread.sleep(2 * 1000)
 
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
       if (requestKeys.size != 5) fail("did not get the expected delivery. dumping keys: [%s]".format(requestKeys.mkString(",")))
@@ -187,7 +187,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
       val messageBody = message.toString.getBytes("UTF-8")
       publish(exchange_A, "a.b.z.d", Map(MESSAGE_ID.name -> message.toString), messageBody)
 
-      Thread.sleep(1 * 1000)
+      Thread.sleep(2 * 1000)
 
       val requestKeys = collectionAsScalaIterableConverter(server.requests.keySet()).asScala
       if (requestKeys.size != 5) fail("did not get the expected delivery. dumping keys: [%s]".format(requestKeys.mkString(",")))
@@ -252,7 +252,7 @@ class TopicRoundTripSpec extends Specification with WebhooqLogger with JUnit {
     HttpClient.blockingCall(bindRequest,bindTimeout*1000) match {
       case None =>
         fail("Bind response timed out after %d seconds ".format(bindTimeout))
-      case Some(response) if (response.status.code != HttpStatus.ACCEPTED().code) =>
+      case Some(response) if (response.status.code != HttpStatus.CREATED().code) =>
         fail("Bind response did not return expected 201 Created status: %s".format(response))
       case Some(response) =>
         wqLog.info("Bind successfully created")

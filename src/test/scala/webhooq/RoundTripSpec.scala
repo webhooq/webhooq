@@ -134,7 +134,7 @@ class RoundTripSpec extends Specification with WebhooqLogger with JUnit {
         HttpClient.blockingCall(bindRequest,bindTimeout*1000) match {
           case None =>
             fail("Bind response timed out after %d seconds ".format(bindTimeout))
-          case Some(response) if (response.status.code != HttpStatus.ACCEPTED().code) =>
+          case Some(response) if (response.status.code != HttpStatus.CREATED().code) =>
             fail("Bind response did not return expected 201 Created status: %s".format(response))
           case Some(response) =>
             wqLog.info("Bind successfully created")

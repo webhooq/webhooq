@@ -275,7 +275,7 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
             } else {
               Schema.bindings.put(exchangeRef,new Binding(Left(new ExchangeBinding(destExchangeRef,routing_key))))
             }
-            RESPONSE.accepted()
+            RESPONSE.created()
           }
 
         // bind a queue to the exchange.
@@ -294,7 +294,7 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
               Schema.bindings.put(exchangeRef,new Binding(Right(new QueueBinding(queueRef,routing_key,link))))
             }
           }
-          RESPONSE.accepted()
+          RESPONSE.created()
       }
 
     }

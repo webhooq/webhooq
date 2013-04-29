@@ -10,14 +10,18 @@ Webhooq Goals
    *   Undelivered Messages live for up to 12 hours.
    *   Message size must be 64 kilobytes or less in size.
    *   Messages are delivered once. Message duplication is done within webhooq, eliminating the need for consumers to consult an auxiliary deduplication cache. Once webhooq receives an HTTP 2xx status code response from your webhook, a message is considered delivered. Webhooq will requeue any message that fails delivery.
+   *   Informative error messages. If you encounter an error, it should describe exactly what was wrong with your request.
 
+Status
+------
+Webhooq follows a 'release early, release often' development model. We are just finishing the PoC phase, there are and will be bugs. Today, we are not production-ready.
+Development is focused on providing a complete implementation of the goals listed above first even if it affects performance initially.
 
 
 Building Webhooq
 ----------------
 Assemble an executable jar.
 `mvn clean compile test assembly:single`
-
 
 
 Running Webhooq
@@ -42,19 +46,31 @@ Messages are published to an exchange with a routing key.
 
 Exchanges
 ---------
-Declare a topic exchange (e.g. my-exchange). Declaring an exchange that already exists will fail.
+Declare a topic exchange (e.g. my-exchange).
 `curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic`
+expect:
+201 Created
+400 Declaring an exchange that already exists.
 
-Delete an exchange (e.g. my-exchange). Deleting an exchange that does not exist will fail.
+Delete an exchange (e.g. my-exchange).
 `curl -v  -X DELETE http://localhost:8080/exchange/my-exchange`
+expect:
+204 No Content
+404 Deleting an exchange that does not exist.
 
 Queues
 ------
-Declare an exchange (e.g. my-queue).  Declaring a queue that already exists will fail.
+Declare an exchange (e.g. my-queue).
 `curl -v  -X POST http://localhost:8080/queue/my-queue`
+expect:
+201 Created
+400 Declaring a queue that already exists.
 
-Delete an exchange (e.g. my-exchange). Deleting a queue that does not exist will fail.
+Delete an exchange (e.g. my-exchange).
 `curl -v  -X DELETE http://localhost:8080/queue/my-queue`
+expect:
+204 No Content
+404 Deleting a queue that does not exist.
 
 Binding
 -------
@@ -62,9 +78,15 @@ Exchanges can be bound to queues or other exchanges.
 
 Bind an exchange (my-source) to another exchange (my-dest) using a routing key (a.*.*.d). Messages published to the source exchange that match the routing key will be delivered to the destination exchange.
 `curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind`
+expect:
+201 Created
+400 If Routing Key, Source exchange, or Destination (exchange| (queue & link))  are missing/malformed.
 
 Bind an exchange (my-exchange) to a queue (my-queue) using a routing key (a.b.c.d) and the callback url (http://my-site.com). Messages published to the exchange that match the routing key will be delivered to the callback link.
-`curl -v -X POST -H 'x-wq-queue:my-dest 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind`
+`curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind`
+expect:
+201 Created
+400 If Routing Key, Source exchange, or Destination (exchange| (queue & link))  are missing/malformed.
 
 Publishing
 ----------
@@ -73,7 +95,9 @@ Publishing is always asynchronous.
 
 Publish a message (the contents of mess.txt) to an exchange (my-exchange) with a routing key (a.b.c.d).
 `cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange`
-
+expect:
+202 Accepted
+400 If Routing Key or Exchange are missing/malformed.
 
 
 
