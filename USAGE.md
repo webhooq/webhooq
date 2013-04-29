@@ -10,56 +10,56 @@ Using Webhook
 ## Exchanges
 
 
-### Declare an exchange.
+### Declare an Exchange.
 
-| Method | URL                                                               |
-|--------|-------------------------------------------------------------------|
-|  POST  | http://localhost:8080/exchange/:exchange-name?type=:exchange-type |
+| Method | URL                                                                   |
+|--------|-----------------------------------------------------------------------|
+|  POST  | http://localhost:8080/exchange/`:exchange-name`?type=`:exchange-type` |
 
 | Paramaters       | Description                                                             |
 |------------------|-------------------------------------------------------------------------|
 | `:exchange-name` | A URL-safe id of the exchange to create.                                |
 | `:exchange-type` | The type of exchange to create, must be `direct`, `fanout`, or `topic`. |
 
-| Headers          | Description             |
-|------------------|-------------------------|
-| `Host`           | Used to partition data. |
+| Headers | Description             |
+|---------|-------------------------|
+| `Host`  | Used to partition data. |
 
 Result:
 
-| Code | Reason                                     |
-|------|--------------------------------------------|
-|  201 | Created                                    |
-|  400 | Declaring an exchange that already exists. |
+|  Code  | Reason                                     |
+|--------|--------------------------------------------|
+|  `201` | Created                                    |
+|  `400` | Declaring an exchange that already exists. |
 
-A cURL example (e.g. Declare an exchange named `my-exchange` of type `topic`):
+A cURL example (Declare an Exchange named `my-exchange` of type `topic`):
 ```
 curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 ```
 
 
-### Delete an exchange
+### Delete an Exchange.
 
 | Method | URL                                                               |
-|--------|-----------------------------------------------|
-| DELETE | http://localhost:8080/exchange/:exchange-name |
+|--------|-------------------------------------------------|
+| DELETE | http://localhost:8080/exchange/`:exchange-name` |
 
 | Paramaters       | Description                              |
 |------------------|------------------------------------------|
 | `:exchange-name` | A URL-safe id of the exchange to delete. |
 
-| Headers          | Description             |
-|------------------|-------------------------|
-| `Host`           | Used to partition data. |
+| Headers | Description             |
+|---------|-------------------------|
+| `Host`  | Used to partition data. |
 
 Result:
 
-| Code | Reason                                    |
-|------|-------------------------------------------|
-|  204 | No Content                                |
-|  404 | Deleting an exchange that does not exist. |
+|  Code  | Reason                                    |
+|--------|-------------------------------------------|
+|  `204` | No Content                                |
+|  `404` | Deleting an exchange that does not exist. |
 
-A cURL example (e.g. Delete an exchange named `my-exchange`):
+A cURL example (Delete an Exchange named `my-exchange`):
 ```
 curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 ```
@@ -67,10 +67,20 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 
 ## Queues
 
-### Declare an exchange (e.g. my-queue).
-```
-curl -v  -X POST http://localhost:8080/queue/my-queue
-```
+### Declare a Queue.
+
+| Method | URL                                       |
+|--------|-------------------------------------------|
+|  POST  | http://localhost:8080/queue/`:queue-name` |
+
+| Paramaters    | Description                           |
+|---------------|---------------------------------------|
+| `:queue-name` | A URL-safe id of the queue to create. |
+
+| Headers | Description             |
+|---------|-------------------------|
+| `Host`  | Used to partition data. |
+
 Result:
 
 | Code | Reason                                 |
@@ -78,10 +88,26 @@ Result:
 |  201 | Created                                |
 |  400 | Declaring a queue that already exists. |
 
-### Delete an exchange (e.g. my-exchange).
+A cURL example (Declare a Queue named `my-queue`):
 ```
-curl -v  -X DELETE http://localhost:8080/queue/my-queue
+curl -v  -X POST http://localhost:8080/queue/my-queue
 ```
+
+
+### Delete a Queue.
+
+| Method | URL                                       |
+|--------|-------------------------------------------|
+| DELETE | http://localhost:8080/queue/`:queue-name` |
+
+| Paramaters    | Description                           |
+|---------------|---------------------------------------|
+| `:queue-name` | A URL-safe id of the queue to delete. |
+
+| Headers | Description             |
+|---------|-------------------------|
+| `Host`  | Used to partition data. |
+
 Result:
 
 | Code | Reason                                |
@@ -89,6 +115,10 @@ Result:
 |  204 | No Content                            |
 |  404 | Deleting a queue that does not exist. |
 
+A cURL example (Delete a Queue named `my-queue`):
+```
+curl -v  -X DELETE http://localhost:8080/queue/my-queue
+```
 
 ## Binding
 
