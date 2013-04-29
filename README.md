@@ -63,6 +63,7 @@ Declare a topic exchange (e.g. my-exchange).
 ```curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic```
 
 Result:
+
 | Code | Reason                                     |
 |------|--------------------------------------------|
 |  201 | Created                                    |
@@ -74,6 +75,7 @@ Delete an exchange (e.g. my-exchange).
 ```curl -v  -X DELETE http://localhost:8080/exchange/my-exchange```
 
 Result:
+
 | Code | Reason                                    |
 |------|-------------------------------------------|
 |  204 | No Content                                |
@@ -87,6 +89,7 @@ Declare an exchange (e.g. my-queue).
 ```curl -v  -X POST http://localhost:8080/queue/my-queue```
 
 Result:
+
 | Code | Reason                                 |
 |------|----------------------------------------|
 |  201 | Created                                |
@@ -97,6 +100,7 @@ Delete an exchange (e.g. my-exchange).
 ```curl -v  -X DELETE http://localhost:8080/queue/my-queue```
 
 Result:
+
 | Code | Reason                                |
 |------|---------------------------------------|
 |  204 | No Content                            |
@@ -112,6 +116,7 @@ Bind an exchange (my-source) to another exchange (my-dest) using a routing key (
 ```curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind```
 
 Result:
+
 | Code | Reason                                                                                             |
 |------|----------------------------------------------------------------------------------------------------|
 |  201 | Created                                                                                            |
@@ -123,6 +128,7 @@ Bind an exchange (my-exchange) to a queue (my-queue) using a routing key (a.b.c.
 ```curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind```
 
 Result:
+
 | Code | Reason                                                                                             |
 |------|----------------------------------------------------------------------------------------------------|
 |  201 | Created                                                                                            |
@@ -135,10 +141,11 @@ Publishing is always done to an exchange.
 Publishing is always asynchronous.
 
 Publish a message (the contents of mess.txt) to an exchange (my-exchange) with a routing key (a.b.c.d).
-
-```cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange```
-
+```
+cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange
+```
 Result:
+
 | code | Reason                                            |
 |------|---------------------------------------------------|
 |  202 | Accepted`                                         |
