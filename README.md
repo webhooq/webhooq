@@ -13,11 +13,14 @@ Webhooq Goals
    *   Messages are delivered once. Message duplication is done within Webhooq, eliminating the need for consumers to consult an auxiliary deduplication cache. Once Webhooq receives an HTTP 2xx status code response from your webhook, a message is considered delivered. Webhooq will requeue any message that fails delivery.
    *   Informative error messages. If you encounter an error, it should describe exactly what was wrong with your request.
 
+
+
 ******
 Status
 ======
 Webhooq follows a 'release early, release often' development model. We are just finishing the PoC phase, there are and will be bugs. Today, we are not production-ready.
 Development is focused on providing a complete implementation of the goals listed above first even if it affects performance initially.
+
 
 
 ****************
@@ -26,6 +29,7 @@ Building Webhooq
 Assemble an executable jar.
 
 ```mvn clean compile test assembly:single```
+
 
 
 ***************
@@ -59,7 +63,6 @@ Declare a topic exchange (e.g. my-exchange).
 ```curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic```
 
 Result:
-
 | Code | Reason                                     |
 |------|--------------------------------------------|
 |  201 | Created                                    |
@@ -71,7 +74,6 @@ Delete an exchange (e.g. my-exchange).
 ```curl -v  -X DELETE http://localhost:8080/exchange/my-exchange```
 
 Result:
-
 | Code | Reason                                    |
 |------|-------------------------------------------|
 |  204 | No Content                                |
@@ -85,7 +87,6 @@ Declare an exchange (e.g. my-queue).
 ```curl -v  -X POST http://localhost:8080/queue/my-queue```
 
 Result:
-
 | Code | Reason                                 |
 |------|----------------------------------------|
 |  201 | Created                                |
@@ -96,7 +97,6 @@ Delete an exchange (e.g. my-exchange).
 ```curl -v  -X DELETE http://localhost:8080/queue/my-queue```
 
 Result:
-
 | Code | Reason                                |
 |------|---------------------------------------|
 |  204 | No Content                            |
@@ -112,7 +112,6 @@ Bind an exchange (my-source) to another exchange (my-dest) using a routing key (
 ```curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind```
 
 Result:
-
 | Code | Reason                                                                                             |
 |------|----------------------------------------------------------------------------------------------------|
 |  201 | Created                                                                                            |
@@ -124,7 +123,6 @@ Bind an exchange (my-exchange) to a queue (my-queue) using a routing key (a.b.c.
 ```curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind```
 
 Result:
-
 | Code | Reason                                                                                             |
 |------|----------------------------------------------------------------------------------------------------|
 |  201 | Created                                                                                            |
@@ -141,7 +139,6 @@ Publish a message (the contents of mess.txt) to an exchange (my-exchange) with a
 ```cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange```
 
 Result:
-
 | code | Reason                                            |
 |------|---------------------------------------------------|
 |  202 | Accepted`                                         |
