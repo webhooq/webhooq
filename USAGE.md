@@ -7,6 +7,10 @@
    *   Messages are published to an Exchange with a Routing Key.
    *   Messages a just HTTP requests to the Exchange. All headers and the request body are forwarded to the Exchange's bindings, based on the Exchange's type and the Routing Key used in the binding.
 
+[Exchanges](# Exchanges)
+[Queues](# Queues)
+[Binding](# Binding)
+[Publishing](# Publishing)
 --
 
 # Exchanges
