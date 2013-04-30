@@ -12,6 +12,8 @@ Using Webhook
 
 ### Declare an Exchange.
 
+#### Request:
+
 | Method | URL                                                                   |
 |--------|-----------------------------------------------------------------------|
 |  POST  | http://localhost:8080/exchange/`:exchange-name`?type=`:exchange-type` |
@@ -25,7 +27,7 @@ Using Webhook
 |---------|-------------------------|
 | `Host`  | Used to partition data. |
 
-Result:
+#### Response:
 
 |  Code  | Reason                                     |
 |--------|--------------------------------------------|
@@ -40,6 +42,8 @@ curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 
 ### Delete an Exchange.
 
+#### Request:
+
 | Method | URL                                                               |
 |--------|-------------------------------------------------|
 | DELETE | http://localhost:8080/exchange/`:exchange-name` |
@@ -52,7 +56,7 @@ curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 |---------|-------------------------|
 | `Host`  | Used to partition data. |
 
-Result:
+#### Response:
 
 |  Code  | Reason                                    |
 |--------|-------------------------------------------|
@@ -69,6 +73,8 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 
 ### Declare a Queue.
 
+#### Request:
+
 | Method | URL                                       |
 |--------|-------------------------------------------|
 |  POST  | http://localhost:8080/queue/`:queue-name` |
@@ -81,7 +87,7 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 |---------|-------------------------|
 | `Host`  | Used to partition data. |
 
-Result:
+#### Response:
 
 | Code | Reason                                 |
 |------|----------------------------------------|
@@ -96,6 +102,8 @@ curl -v  -X POST http://localhost:8080/queue/my-queue
 
 ### Delete a Queue.
 
+#### Request:
+
 | Method | URL                                       |
 |--------|-------------------------------------------|
 | DELETE | http://localhost:8080/queue/`:queue-name` |
@@ -108,7 +116,7 @@ curl -v  -X POST http://localhost:8080/queue/my-queue
 |---------|-------------------------|
 | `Host`  | Used to partition data. |
 
-Result:
+#### Response:
 
 | Code | Reason                                |
 |------|---------------------------------------|
@@ -128,7 +136,7 @@ Exchanges can be bound to queues or other exchanges.
 ```
 curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind
 ```
-Result:
+#### Response:
 
 | Code | Reason                                                                                             |
 |------|----------------------------------------------------------------------------------------------------|
@@ -140,7 +148,7 @@ Result:
 ```
 curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind
 ```
-Result:
+#### Response:
 
 | Code | Reason                                                                                             |
 |------|----------------------------------------------------------------------------------------------------|
@@ -157,7 +165,7 @@ Publishing is always asynchronous.
 ```
 cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange
 ```
-Result:
+#### Response:
 
 | Code | Reason                                            |
 |------|---------------------------------------------------|

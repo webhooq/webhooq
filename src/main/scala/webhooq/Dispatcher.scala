@@ -42,7 +42,7 @@ class Dispatcher() extends Actor with WebhooqLogger {
           outgoing.link.findValueWithParam("rel","wq") match {
             case None =>
               wqLog.error(
-                "Message '%s' could not be delivered to link '%s', since it did not contain a rel=\"wq\" param.".format(
+                "Message '%s' could not be delivered to link '%s', it did not contain a rel=\"wq\" link-param.".format(
                   message.toVerbose(),
                   outgoing.link.toString()
                 )
