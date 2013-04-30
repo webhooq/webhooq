@@ -18,7 +18,7 @@ Using Webhook
 |--------|-----------------------------------------------------------------------|
 |  POST  | http://localhost:8080/exchange/`:exchange-name`?type=`:exchange-type` |
 
-| Paramaters       | Description                                                             |
+| Parameters       | Description                                                             |
 |------------------|-------------------------------------------------------------------------|
 | `:exchange-name` | A URL-safe id of the exchange to create.                                |
 | `:exchange-type` | The type of exchange to create, must be `direct`, `fanout`, or `topic`. |
@@ -46,11 +46,11 @@ curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 
 #### Request:
 
-| Method | URL                                                               |
+| Method | URL                                             |
 |--------|-------------------------------------------------|
 | DELETE | http://localhost:8080/exchange/`:exchange-name` |
 
-| Paramaters       | Description                              |
+| Parameters       | Description                              |
 |------------------|------------------------------------------|
 | `:exchange-name` | A URL-safe id of the exchange to delete. |
 
@@ -83,7 +83,7 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 |--------|-------------------------------------------|
 |  POST  | http://localhost:8080/queue/`:queue-name` |
 
-| Paramaters    | Description                           |
+| Parameters    | Description                           |
 |---------------|---------------------------------------|
 | `:queue-name` | A URL-safe id of the queue to create. |
 
@@ -114,7 +114,7 @@ curl -v  -X POST http://localhost:8080/queue/my-queue
 |--------|-------------------------------------------|
 | DELETE | http://localhost:8080/queue/`:queue-name` |
 
-| Paramaters    | Description                           |
+| Parameters    | Description                           |
 |---------------|---------------------------------------|
 | `:queue-name` | A URL-safe id of the queue to delete. |
 
@@ -131,7 +131,7 @@ curl -v  -X POST http://localhost:8080/queue/my-queue
 
 #### Example:
 
-Use cURL to delete a Queue named `my-queue`:
+Use cURL to delete a Queue named `my-queue` :
 ```
 curl -v  -X DELETE http://localhost:8080/queue/my-queue
 ```
@@ -140,44 +140,86 @@ curl -v  -X DELETE http://localhost:8080/queue/my-queue
 
 Exchanges can be bound to queues or other exchanges.
 
-### Bind an exchange (my-source) to another exchange (my-dest) using a routing key (a.*.*.d). Messages published to the source exchange that match the routing key will be delivered to the destination exchange.
+### Declare a Binding.
+
+#### Request:
+
+| Method | URL                                                  |
+|--------|------------------------------------------------------|
+|  POST  | http://localhost:8080/exchange/`:exchange-name`/bind |
+
+| Parameters       | Description                                                                 |
+|------------------|-----------------------------------------------------------------------------|
+| `:exchange-name` | A URL-safe id of the exchange to use as the source exchange in the binding. |
+
+| Headers         | Description             |
+|-----------------|-------------------------|
+| `Host`          | Used to partition data. |
+| `x-wq-rkey`     | The Routing Key to use for this binding. Messages published with a matching routing key (based on exchange type) will be delivered to this binding's destination. |
+|    EITHER       |                         |
+| `x-wq-exchange` | Defines an exchange as the destination to bind the source exchange to. Messages published to the source exchange with a matching routing key (based on the source Exchange type) will be delivered to this this exchange. |
+|      OR         |                         |
+| `x-wq-queue     | Defines a queue as the destination to bind the source exchange to. Messages published to the source exchange with a matching routing key (based on the source Exchange type) will be delivered to this this queue's link (defined by `x-wq-link`). |
+| `x-wq-link      | An rfc5988 web link used to define the webhook to invoke when a message is delivered to the queue defined in `x-wq-queue`. The uri defined with a link-param rel="wq" will be invoked delivering messages. |
+
+#### Response:
+
+| Code | Reason                                                                                                    |
+|------|-----------------------------------------------------------------------------------------------------------|
+|  201 | Created                                                                                                   |
+|  400 | If Routing Key, Source exchange, or Destination (exchange| (queue & link)) headers are missing/malformed. |
+
+#### Example:
+
+Use cURL to bind an exchange named `my-source` to another exchange named `my-dest` using a routing key of `a.*.*.d`.
+Messages published to the source exchange that match the routing key will be delivered to the destination exchange.
 ```
 curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind
 ```
-#### Response:
 
-| Code | Reason                                                                                             |
-|------|----------------------------------------------------------------------------------------------------|
-|  201 | Created                                                                                            |
-|  400 | If Routing Key, Source exchange, or Destination (exchange| (queue & link))  are missing/malformed. |
-
-
-### Bind an exchange (my-exchange) to a queue (my-queue) using a routing key (a.b.c.d) and the callback url (http://my-site.com). Messages published to the exchange that match the routing key will be delivered to the callback link.
+Use cURL to bind an exchange named `my-exchange` to a queue named `my-queue` using a routing key of `a.b.c.d` and the callback url of `http://callback.yoursite.com/`.
+Messages published to `my-exchange` that match the routing key  of `a.b.c.d` will be delivered to the callback url.
 ```
-curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://my-site.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind
+curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://callback.yoursite.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind
 ```
-#### Response:
 
-| Code | Reason                                                                                             |
-|------|----------------------------------------------------------------------------------------------------|
-|  201 | Created                                                                                            |
-|  400 | If Routing Key, Source exchange, or Destination (exchange| (queue & link))  are missing/malformed. |
+### Delete a Binding.
+
+Not implemented yet.
 
 
 ## Publishing
 
 Publishing is always done to an exchange.
 Publishing is always asynchronous.
+A Message is the contents of the HTTP request.
+All headers + body of the publish request will be sent to the Exchange's bindings.
 
-### Publish a message (the contents of mess.txt) to an exchange (my-exchange) with a routing key (a.b.c.d).
-```
-cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange
-```
+#### Request:
+
+| Method | URL                                                     |
+|--------|---------------------------------------------------------|
+|  POST  | http://localhost:8080/exchange/`:exchange-name`/publish |
+
+| Parameters       | Description                                                                 |
+|------------------|-----------------------------------------------------------------------------|
+| `:exchange-name` | A URL-safe id of the exchange to publish the message tp. |
+
+| Headers         | Description             |
+|-----------------|-------------------------|
+| `Host`          | Used to partition data. |
+| `x-wq-rkey`     | The Routing Key to use for this publish. Any bindings the exchanges has with a matching routing key (based on exchange type) will receive the headers and body of the this message. |
+
 #### Response:
 
 | Code | Reason                                            |
 |------|---------------------------------------------------|
-|  202 | Accepted`                                         |
+|  202 | Accepted                                          |
 |  400 | If Routing Key or Exchange are missing/malformed. |
 
+#### Example
 
+Use cURL to publish a text Message from the contents of a file named mess.txt, to an Exchange named `my-exchange` with a Routing Key of `a.b.c.d`.
+```
+cat mess.txt | curl -v  -X POST -H "Content-Type:text/plain"  -H "x-wq-rkey:a.b.c.d" --data-binary "@-" http://localhost:8080/exchange/my-exchange
+```
