@@ -1,16 +1,21 @@
 # Using Webhook
+ * Webhooq uses AMQP-inspired primitives: Exchanges, Queues and Routing Keys.
+ * Exchanges come in three types: `direct`, `topic`, and `fanout`.
+ * Exchanges and Queues are identified by a URL-safe name string.
+ * Queues are bound to an Exchange with a Routing Key.
+ * Messages are published to an Exchange with a Routing Key.
+ * Messages a just HTTP requests to the Exchange. All headers and the request body are forwarded to the Exchange's bindings, based on the Exchange's type and the Routing Key used in the binding.
+ * [Exchanges](#exchanges)
+    * [Declare an Exchange](#declare-an-exchange)
+    * [Delete an Exchange](#delete-an-exchange)
+ * [Queues](#queues)
+    * [Declare an Queue](#declare-an-queue)
+    * [Delete an Queue](#delete-an-queue)
+ * [Binding](#binding)
+    * [Declare a Binding](#declare-a-binding)
+    * [Delete a Binding](#delete-a-binding)
+ * [Publishing](#publishing)
 
-   *   Webhooq uses AMQP-inspired primitives: Exchanges, Queues and Routing Keys.
-   *   Exchanges come in three types: `direct`, `topic`, and `fanout`.
-   *   Exchanges and Queues are identified by a URL-safe name string.
-   *   Queues are bound to an Exchange with a Routing Key.
-   *   Messages are published to an Exchange with a Routing Key.
-   *   Messages a just HTTP requests to the Exchange. All headers and the request body are forwarded to the Exchange's bindings, based on the Exchange's type and the Routing Key used in the binding.
-
-[Exchanges](# Exchanges)
-[Queues](# Queues)
-[Binding](# Binding)
-[Publishing](# Publishing)
 --
 
 # Exchanges
