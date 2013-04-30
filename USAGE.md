@@ -34,7 +34,9 @@ Using Webhook
 |  `201` | Created                                    |
 |  `400` | Declaring an exchange that already exists. |
 
-A cURL example (Declare an Exchange named `my-exchange` of type `topic`):
+#### Example:
+
+Use cURL to declare an Exchange named `my-exchange` of type `topic`):
 ```
 curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 ```
@@ -63,7 +65,9 @@ curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 |  `204` | No Content                                |
 |  `404` | Deleting an exchange that does not exist. |
 
-A cURL example (Delete an Exchange named `my-exchange`):
+#### Example:
+
+Use cURL to delete an Exchange named `my-exchange`:
 ```
 curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 ```
@@ -94,7 +98,9 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 |  201 | Created                                |
 |  400 | Declaring a queue that already exists. |
 
-A cURL example (Declare a Queue named `my-queue`):
+#### Example:
+
+Use cURL to declare a Queue named `my-queue`:
 ```
 curl -v  -X POST http://localhost:8080/queue/my-queue
 ```
@@ -123,7 +129,9 @@ curl -v  -X POST http://localhost:8080/queue/my-queue
 |  204 | No Content                            |
 |  404 | Deleting a queue that does not exist. |
 
-A cURL example (Delete a Queue named `my-queue`):
+#### Example:
+
+Use cURL to delete a Queue named `my-queue`:
 ```
 curl -v  -X DELETE http://localhost:8080/queue/my-queue
 ```
