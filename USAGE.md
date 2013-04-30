@@ -1,14 +1,15 @@
-Using Webhook
--------------
+# Using Webhook
+
    *   Webhooq uses AMQP-inspired primitives: Exchanges, Queues and Routing Keys.
-   *   Exchanges come in three types: direct, topic, and fanout.
+   *   Exchanges come in three types: `direct`, `topic`, and `fanout`.
    *   Exchanges and Queues are identified by a URL-safe name string.
    *   Queues are bound to an Exchange with a Routing Key.
    *   Messages are published to an Exchange with a Routing Key.
+   *   Messages a just HTTP requests to the Exchange. All headers and the request body are forwarded to the Exchange's bindings, based on the Exchange's type and the Routing Key used in the binding.
 
 --
 
-## Exchanges
+# Exchanges
 
 ### Declare an Exchange.
 
@@ -36,11 +37,10 @@ Using Webhook
 
 #### Example:
 
-Use cURL to declare an Exchange named `my-exchange` of type `topic`):
+Use cURL to declare an Exchange named `my-exchange` of type `topic`:
 ```
 curl -v  -X POST http://localhost:8080/exchange/my-exchange?type=topic
 ```
-
 
 ### Delete an Exchange.
 
@@ -74,7 +74,7 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 
 --
 
-## Queues
+# Queues
 
 ### Declare a Queue.
 
@@ -139,7 +139,7 @@ curl -v  -X DELETE http://localhost:8080/queue/my-queue
 
 --
 
-## Binding
+# Binding
 
 Exchanges can be bound to queues or other exchanges.
 
@@ -158,11 +158,11 @@ Exchanges can be bound to queues or other exchanges.
 | Headers         | Description             |
 |-----------------|-------------------------|
 | `Host`          | Used to partition data. |
-| `x-wq-rkey`     | The Routing Key to use for this binding. Messages published with a matching routing key (based on exchange type) will be delivered to this binding's destination. |
+| `x-wq-rkey`     | The Routing Key to use for this binding. Messages published with a matching Routing Key (based on exchange type) will be delivered to this binding's destination. |
 |    EITHER       |                         |
-| `x-wq-exchange` | Defines an exchange as the destination to bind the source exchange to. Messages published to the source exchange with a matching routing key (based on the source Exchange type) will be delivered to this this exchange. |
+| `x-wq-exchange` | Defines an exchange as the destination to bind the source exchange to. Messages published to the source exchange with a matching Routing Key (based on the source Exchange type) will be delivered to this exchange. |
 |      OR         |                         |
-| `x-wq-queue     | Defines a queue as the destination to bind the source exchange to. Messages published to the source exchange with a matching routing key (based on the source Exchange type) will be delivered to this this queue's link (defined by `x-wq-link`). |
+| `x-wq-queue     | Defines a queue as the destination to bind the source exchange to. Messages published to the source exchange with a matching Routing Key (based on the source Exchange's type) will be delivered to this queue's link (defined by `x-wq-link`). |
 | `x-wq-link      | An rfc5988 web link used to define the webhook to invoke when a message is delivered to the queue defined in `x-wq-queue`. The uri defined with a link-param rel="wq" will be invoked delivering messages. |
 
 #### Response:
@@ -170,18 +170,18 @@ Exchanges can be bound to queues or other exchanges.
 | Code | Reason                                                                                                      |
 |------|-------------------------------------------------------------------------------------------------------------|
 |  201 | Created                                                                                                     |
-|  400 | If Routing Key, Source exchange, or Destination (exchange or (queue & link)) headers are missing/malformed. |
+|  400 | If Routing Key, Source exchange, or Destination (exchange or (queue + link)) headers are missing/malformed. |
 
 #### Example:
 
-Use cURL to bind an exchange named `my-source` to another exchange named `my-dest` using a routing key of `a.*.*.d`.
-Messages published to the source exchange that match the routing key will be delivered to the destination exchange.
+Use cURL to bind an exchange named `my-source` to another exchange named `my-dest` using a Routing Key of `a.*.*.d`.
+Messages published to the source exchange that match the Routing Key will be delivered to the destination exchange.
 ```
 curl -v -X POST -H 'x-wq-exchange:my-dest' -H 'x-wq-rkey:a.*.*.d' http://localhost:8080/exchange/my-source/bind
 ```
 
-Use cURL to bind an exchange named `my-exchange` to a queue named `my-queue` using a routing key of `a.b.c.d` and the callback url of `http://callback.yoursite.com/`.
-Messages published to `my-exchange` that match the routing key  of `a.b.c.d` will be delivered to the callback url.
+Use cURL to bind an exchange named `my-exchange` to a queue named `my-queue` using a Routing Key of `a.b.c.d` and the callback url of `http://callback.yoursite.com/`.
+Messages published to `my-exchange` that match the Routing Key  of `a.b.c.d` will be delivered to the callback url.
 ```
 curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<http://callback.yoursite.com>; rel="wq"' http://localhost:8080/exchange/my-exchange/bind
 ```
@@ -192,7 +192,7 @@ Not implemented yet.
 
 --
 
-## Publishing
+# Publishing
 
  * Publishing is always done to an exchange.
  * Publishing is always asynchronous.
@@ -211,7 +211,7 @@ Not implemented yet.
 | Headers         | Description             |
 |-----------------|-------------------------|
 | `Host`          | Used to partition data. |
-| `x-wq-rkey`     | The Routing Key to use for this publish. Any bindings the exchanges has with a matching routing key (based on exchange type) will receive the headers and body of the this message. |
+| `x-wq-rkey`     | The Routing Key to use for this publish. Any bindings this exchange has with a matching Routing Key (based on exchange type) will receive this message. |
 
 #### Response:
 
