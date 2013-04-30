@@ -17,13 +17,13 @@ Webhooq Goals
 Status
 ------
 Webhooq follows a 'release early, release often' development model. We are just finishing the PoC phase, there are and will be bugs. Today, we are not production-ready.
-Development is focused on providing a complete implementation of the goals listed above first even if it affects performance initially.
+Development is focused on providing a complete implementation of the goals listed above first even if it affects performance initially. Outstanding tasks are documented in TODO.md
 
 
 
 Building Webhooq
 ----------------
-##### Assemble an executable jar.
+##### Assemble an self-contained executable jar.
 ```
 mvn clean compile test assembly:single
 ```
@@ -44,10 +44,10 @@ java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.ja
 ```
 
 
-Using Webhook
+Using Webhooq
 -------------
 
-API usage is documented in USAGE.md
+API usage is documented in API-USAGE.md
 
 
 
