@@ -94,10 +94,10 @@ curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 
 #### Response:
 
-| Code | Reason                                 |
-|------|----------------------------------------|
-|  201 | Created                                |
-|  400 | Declaring a queue that already exists. |
+| Code  | Reason                                 |
+|-------|----------------------------------------|
+| `201` | Created                                |
+| `400` | Declaring a queue that already exists. |
 
 #### Example:
 
@@ -125,10 +125,10 @@ curl -v  -X POST http://localhost:8080/queue/my-queue
 
 #### Response:
 
-| Code | Reason                                |
-|------|---------------------------------------|
-|  204 | No Content                            |
-|  404 | Deleting a queue that does not exist. |
+| Code  | Reason                                |
+|-------|---------------------------------------|
+| `204` | No Content                            |
+| `404` | Deleting a queue that does not exist. |
 
 #### Example:
 
@@ -162,15 +162,15 @@ Exchanges can be bound to queues or other exchanges.
 |    EITHER       |                         |
 | `x-wq-exchange` | Defines an exchange as the destination to bind the source exchange to. Messages published to the source exchange with a matching Routing Key (based on the source Exchange type) will be delivered to this exchange. |
 |      OR         |                         |
-| `x-wq-queue     | Defines a queue as the destination to bind the source exchange to. Messages published to the source exchange with a matching Routing Key (based on the source Exchange's type) will be delivered to this queue's link (defined by `x-wq-link`). |
-| `x-wq-link      | An rfc5988 web link used to define the webhook to invoke when a message is delivered to the queue defined in `x-wq-queue`. The uri defined with a link-param rel="wq" will be invoked delivering messages. |
+| `x-wq-queue`    | Defines a queue as the destination to bind the source exchange to. Messages published to the source exchange with a matching Routing Key (based on the source Exchange's type) will be delivered to this queue's link (defined by `x-wq-link`). |
+| `x-wq-link`     | An rfc5988 web link used to define the webhook to invoke when a message is delivered to the queue defined in `x-wq-queue`. The uri defined with a link-param rel="wq" will be invoked delivering messages. |
 
 #### Response:
 
-| Code | Reason                                                                                                      |
-|------|-------------------------------------------------------------------------------------------------------------|
-|  201 | Created                                                                                                     |
-|  400 | If Routing Key, Source exchange, or Destination (exchange or (queue + link)) headers are missing/malformed. |
+| Code  | Reason                                                                                                      |
+|-------|-------------------------------------------------------------------------------------------------------------|
+| `201` | Created                                                                                                     |
+| `400` | If Routing Key, Source exchange, or Destination (exchange or (queue + link)) headers are missing/malformed. |
 
 #### Example:
 
@@ -215,10 +215,10 @@ Not implemented yet.
 
 #### Response:
 
-| Code | Reason                                            |
-|------|---------------------------------------------------|
-|  202 | Accepted                                          |
-|  400 | If Routing Key or Exchange are missing/malformed. |
+| Code  | Reason                                            |
+|-------|---------------------------------------------------|
+| `202` | Accepted                                          |
+| `400` | If Routing Key or Exchange are missing/malformed. |
 
 #### Example
 
