@@ -6,9 +6,9 @@ Using Webhook
    *   Queues are bound to an Exchange with a Routing Key.
    *   Messages are published to an Exchange with a Routing Key.
 
+--
 
 ## Exchanges
-
 
 ### Declare an Exchange.
 
@@ -72,6 +72,7 @@ Use cURL to delete an Exchange named `my-exchange`:
 curl -v  -X DELETE http://localhost:8080/exchange/my-exchange
 ```
 
+--
 
 ## Queues
 
@@ -136,6 +137,8 @@ Use cURL to delete a Queue named `my-queue` :
 curl -v  -X DELETE http://localhost:8080/queue/my-queue
 ```
 
+--
+
 ## Binding
 
 Exchanges can be bound to queues or other exchanges.
@@ -164,10 +167,10 @@ Exchanges can be bound to queues or other exchanges.
 
 #### Response:
 
-| Code | Reason                                                                                                    |
-|------|-----------------------------------------------------------------------------------------------------------|
-|  201 | Created                                                                                                   |
-|  400 | If Routing Key, Source exchange, or Destination (exchange| (queue & link)) headers are missing/malformed. |
+| Code | Reason                                                                                                      |
+|------|-------------------------------------------------------------------------------------------------------------|
+|  201 | Created                                                                                                     |
+|  400 | If Routing Key, Source exchange, or Destination (exchange or (queue & link)) headers are missing/malformed. |
 
 #### Example:
 
@@ -187,13 +190,13 @@ curl -v -X POST -H 'x-wq-queue:my-dest' -H 'x-wq-rkey:a.b.c.d' -H 'x-wq-link:<ht
 
 Not implemented yet.
 
+--
 
 ## Publishing
 
-Publishing is always done to an exchange.
-Publishing is always asynchronous.
-A Message is the contents of the HTTP request.
-All headers + body of the publish request will be sent to the Exchange's bindings.
+ * Publishing is always done to an exchange.
+ * Publishing is always asynchronous.
+ * A Message is the contents of the HTTP request. All headers and the body of the publish request will be sent to the Exchange's bindings.
 
 #### Request:
 
@@ -203,7 +206,7 @@ All headers + body of the publish request will be sent to the Exchange's binding
 
 | Parameters       | Description                                                                 |
 |------------------|-----------------------------------------------------------------------------|
-| `:exchange-name` | A URL-safe id of the exchange to publish the message tp. |
+| `:exchange-name` | A URL-safe id of the exchange to publish the message to. |
 
 | Headers         | Description             |
 |-----------------|-------------------------|
