@@ -4,7 +4,7 @@ import akka.actor.{Props, ActorRef, ActorContext, Actor}
 import event.HazelcastQueueLister.QueueMessage
 import webhooq.http._
 import logging.WebhooqLogger
-import model.dao.Outgoing
+import webhooq.model.dao.{Delivery, DeliveryRef, Outgoing}
 import java.util.UUID
 import org.jboss.netty.channel.SimpleChannelHandler
 import webhooq.event.HazelcastQueueLister.QueueMessage
@@ -61,8 +61,14 @@ class Dispatcher() extends Actor with WebhooqLogger {
                   outgoing.headers.toList,
                   message.body
                 ),
-                (response:HttpResponse) =>
-                  if (response.status.code < 200 && response.status.code > 299) {
+                (response:HttpResponse) => {
+                  // log the attempt in the delivery-attempt-log
+                  val status = response.status.code
+                  val deliveryRef = DeliveryRef(outgoing.message_id,linkValue.uri)
+                  Schema.deliveries.put(deliveryRef, Delivery(System.currentTimeMillis(), status))
+
+
+                  if (status < 200 && status > 299) {
                     wqLog.error(
                       "Message '%s' could not be delivered to link '%s', webhook returned: %s.".format(
                         message.toVerbose(),
@@ -77,13 +83,8 @@ class Dispatcher() extends Actor with WebhooqLogger {
                       )
                     )
                     //TODO: remove message from messages map, update dedupe cache.
-                  }
+                  }}
               )
-//              HttpClient.connect(
-//                linkValue.uri,
-//                Dispatcher.createResponseActor("response-%s",schema, this.context, outgoing),
-//                Map[String,SimpleChannelHandler]("handler" -> new DeliveryResponseHandler())
-//              )
           }
       }
 

@@ -5,7 +5,7 @@ import util.parsing.combinator.RegexParsers
 
 
 /**
- * A Link is a collection of LinkValues. A link header may contain more than one URL,
+ * An RFC-5988 Link is a collection of LinkValues. A link header may contain more than one URI,
  * each with it's own map of parameters. We model each URI+Parameters as a LinkValue instance.
  */
 case class Link(linkValues:List[LinkValue]) {

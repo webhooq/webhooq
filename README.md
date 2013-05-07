@@ -44,6 +44,12 @@ java -jar -Dnetty.port=9090 target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.ja
 ```
 
 
+##### Start webhooq on port 9090 with DEBUG logging enabled.
+```
+java -jar -Dnetty.port=9090 -Dwq.logging.level=DEBUG target/webhooq-1.0-SNAPSHOT-jar-with-dependencies.jar
+```
+
+
 Using Webhooq
 -------------
 

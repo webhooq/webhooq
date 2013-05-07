@@ -2,7 +2,7 @@ package webhooq
 
 import akka.actor.{Props, ActorRef, ActorContext, Actor}
 import event.HazelcastQueueLister.QueueMessage
-import model.dao.{ExchangeRef, Outgoing, Incoming}
+import webhooq.model.dao.{Delivery, DeliveryRef, ExchangeRef, Outgoing, Incoming}
 import akka.event.Logging
 import scala.collection.JavaConverters.collectionAsScalaIterableConverter
 import model._
@@ -19,13 +19,37 @@ class Router() extends Actor with WebhooqLogger {
   def receive = {
     case  QueueMessage(incoming:Incoming) =>
       val outgoing = processExchange(incoming.exchange,ListBuffer.empty[ExchangeRef],incoming,ListBuffer.empty[Outgoing])
-      // TODO sort outgoing by queue, deduplicate delivery by choosing a random binding to deliver to, if ( same message id, same queue, same routing key, different links)
-      //outgoing.foldLeft(scala.collection.mutable.ListBuffer)
 
-      // TODO: sort outgoing by link, deduplicate if (same message_id, same link).
+      val placeholderDelivery = Delivery(System.currentTimeMillis(),-1)
       outgoing.foreach{ outgoing =>
-        // TODO: log outgoing message
-        Schema.outgoing.put(outgoing)
+        outgoing.link.findValueWithParam("rel", "wq") match {
+          case Some(linkValue) =>
+            val deliveryRef = DeliveryRef(outgoing.message_id,linkValue.uri)
+            // basic deduplication.
+            // If the message:uri has been routed once then it shouldn't be routed again.
+            // We reuse the delivery-attempt-log as our deduplication evidence.
+            Schema.tx {
+              if (!Schema.deliveries.containsKey(deliveryRef)) {
+                Schema.deliveries.put(deliveryRef, placeholderDelivery)
+                Schema.outgoing.put(outgoing)
+              } else {
+                wqLog.info()
+                wqLog.info(
+                  "Outgoing message(%s) has already been sent to '%s'".format(
+                    outgoing.message_id.message_id.map(_.toString).getOrElse("<message_id not available>"),
+                    outgoing.link.toString()
+                  )
+                )
+              }
+            }
+          case None =>
+            wqLog.warn(
+              "Outgoing message(%s) link is missing rel=\"wq\" link param: %s".format(
+                outgoing.message_id.message_id.map(_.toString).getOrElse("<message_id not available>"),
+                outgoing.link.toString()
+              )
+            )
+        }
       }
 
   }

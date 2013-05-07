@@ -13,6 +13,7 @@ object Schema extends Hazelcast {
   val incoming: java.util.concurrent.BlockingQueue[Incoming] = hazelcast.getQueue("webhooq.incoming")
   val outgoing: java.util.concurrent.BlockingQueue[Outgoing] = hazelcast.getQueue("webhooq.outgoing")
   val bindings: com.hazelcast.core.MultiMap[ExchangeRef, Binding] = hazelcast.getMultiMap("webhooq.bindings")
+  val deliveries: com.hazelcast.core.MultiMap[DeliveryRef, Delivery] = hazelcast.getMultiMap("webhooq.deliveries")
   val exchange_arguments: com.hazelcast.core.MultiMap[ExchangeRef,Argument] = hazelcast.getMultiMap("webhooq.exchange.args")
   val queue_arguments: com.hazelcast.core.MultiMap[QueueRef,Argument] = hazelcast.getMultiMap("webhooq.queue.args")
 //  val bind_arguments: com.hazelcast.core.MultiMap[String,String] = hazelcast.getMultiMap("webhooq.bind.args")
