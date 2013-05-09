@@ -28,12 +28,23 @@ class Router() extends Actor with WebhooqLogger {
             // basic deduplication.
             // If the message:uri has been routed once then it shouldn't be routed again.
             // We reuse the delivery-attempt-log as our deduplication evidence.
-            Schema.tx {
+            Schema.lock(deliveryRef,1000) {
+              wqLog.info(
+                "Checking to see if new outgoing message(%s) has already been sent to '%s'".format(
+                  outgoing.message_id.message_id.map(_.toString).getOrElse("<message_id not available>"),
+                  outgoing.link.toString()
+                )
+              )
               if (!Schema.deliveries.containsKey(deliveryRef)) {
+                wqLog.info(
+                  "New outgoing message(%s) has not been sent to '%s', adding to the outgoing queue.".format(
+                    outgoing.message_id.message_id.map(_.toString).getOrElse("<message_id not available>"),
+                    outgoing.link.toString()
+                  )
+                )
                 Schema.deliveries.put(deliveryRef, placeholderDelivery)
                 Schema.outgoing.put(outgoing)
               } else {
-                wqLog.info()
                 wqLog.info(
                   "Outgoing message(%s) has already been sent to '%s'".format(
                     outgoing.message_id.message_id.map(_.toString).getOrElse("<message_id not available>"),

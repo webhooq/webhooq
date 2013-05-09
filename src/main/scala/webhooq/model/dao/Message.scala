@@ -35,6 +35,11 @@ class Message (var body:Array[Byte]) extends DataSerializable with WebhooqLogger
   }
 
 
+  def toMD5():String = {
+    val digest = MessageDigest.getInstance("MD5")
+    digest.update(this.body)
+    "MD5:"+array2hex(digest.digest())
+  }
 
   def toVerbose():String = {
     if (this.body.length == 0) "<EMPTY MESSAGE BODY>"

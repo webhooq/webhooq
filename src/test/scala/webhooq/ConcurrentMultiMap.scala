@@ -11,7 +11,7 @@ import scala.annotation.tailrec
  *
  * @author Viktor Klang
  */
-class ConcurrentMultiMap[K <: AnyRef, V <: AnyRef: Manifest] {
+class CConcurrentMultiMap[K <: AnyRef, V <: AnyRef: Manifest] {
   private val Naught = Array[V]() //Nil for Arrays
   private val container = new ConcurrentHashMap[K, java.util.Set[V]]
   private val emptySet = new ConcurrentSkipListSet[V]

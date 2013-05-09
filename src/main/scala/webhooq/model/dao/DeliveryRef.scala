@@ -6,9 +6,8 @@ import java.net.{URISyntaxException, URI}
 import java.io.{IOException, DataInput, DataOutput}
 
 /**
- *
  */
-class DeliveryRef (var message_id:Option[MessageRef]=None, var uri:Option[URI]=None) extends DataSerializable with WebhooqLogger {
+case class DeliveryRef (var message_id:Option[MessageRef]=None, var uri:Option[URI]=None) extends DataSerializable with WebhooqLogger {
   def this() {
     this(None,None)
   }

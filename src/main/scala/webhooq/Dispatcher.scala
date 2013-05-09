@@ -35,7 +35,7 @@ class Dispatcher() extends Actor with WebhooqLogger {
         case Some(message) =>
           wqLog.info(
             "attempting to deliver Message '%s' to '%s'".format(
-              message.toVerbose(),
+              message.toMD5(),
               outgoing.link.toString()
             )
           )
@@ -43,15 +43,15 @@ class Dispatcher() extends Actor with WebhooqLogger {
             case None =>
               wqLog.error(
                 "Message '%s' could not be delivered to link '%s', it did not contain a rel=\"wq\" link-param.".format(
-                  message.toVerbose(),
+                  message.toString(),
                   outgoing.link.toString()
                 )
               )
             case Some(linkValue) =>
               wqLog.info(
-                "attempting to deliver Message '%s' to '%s'".format(
-                  message.toVerbose(),
-                  linkValue.uri.toString()
+                "attempting HTTP delivery call to '%s' for Message '%s' ".format(
+                  linkValue.uri.toString(),
+                  message.toMD5()
                 )
               )
               HttpClient.call(
@@ -71,14 +71,14 @@ class Dispatcher() extends Actor with WebhooqLogger {
                   if (status < 200 && status > 299) {
                     wqLog.error(
                       "Message '%s' could not be delivered to link '%s', webhook returned: %s.".format(
-                        message.toVerbose(),
+                        message.toString(),
                         response
                       )
                     )
                   } else {
                     wqLog.info(
                       "Message '%s' was successfully delivered to '%s'".format(
-                        message.toVerbose(),
+                        message.toMD5(),
                         linkValue.uri.toString()
                       )
                     )
