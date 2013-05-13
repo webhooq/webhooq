@@ -19,4 +19,6 @@ object Utils {
     digest.update(a)
     array2hex(digest.digest())
   }
+
 }
+

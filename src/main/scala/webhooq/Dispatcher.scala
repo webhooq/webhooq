@@ -54,37 +54,46 @@ class Dispatcher() extends Actor with WebhooqLogger {
                   message.toMD5()
                 )
               )
-              HttpClient.call(
-                HttpRequest(
-                  linkValue.linkParams.get("wq-method").flatMap(HttpMethod.parse(_)).getOrElse(HttpMethod.GET),
-                  linkValue.uri,
-                  outgoing.headers.toList,
-                  message.body
-                ),
-                (response:HttpResponse) => {
-                  // log the attempt in the delivery-attempt-log
-                  val status = response.status.code
-                  val deliveryRef = DeliveryRef(outgoing.message_id,linkValue.uri)
-                  Schema.deliveries.put(deliveryRef, Delivery(System.currentTimeMillis(), status))
+              try {
+                HttpClient.call(
+                  HttpRequest(
+                    linkValue.linkParams.get("wq-method").flatMap(HttpMethod.parse(_)).getOrElse(HttpMethod.GET),
+                    linkValue.uri,
+                    outgoing.headers.toList,
+                    message.body
+                  ),
+                  (response:HttpResponse) => {
+                    // log the attempt in the delivery-attempt-log
+                    val status = response.status.code
+                    val deliveryRef = DeliveryRef(outgoing.message_id,linkValue.uri)
+                    Schema.deliveries.put(deliveryRef, Delivery(System.currentTimeMillis(), status))
 
 
-                  if (status < 200 && status > 299) {
-                    wqLog.error(
-                      "Message '%s' could not be delivered to link '%s', webhook returned: %s.".format(
-                        message.toString(),
-                        response
+                    if (status < 200 && status > 299) {
+                      wqLog.error(
+                        "Message '%s' could not be delivered to link '%s', webhook returned: %s.".format(
+                          message.toString(),
+                          response
+                        )
                       )
-                    )
-                  } else {
-                    wqLog.info(
-                      "Message '%s' was successfully delivered to '%s'".format(
-                        message.toMD5(),
-                        linkValue.uri.toString()
+                      // TODO: Requeue message!!
+                    } else {
+                      wqLog.info(
+                        "Message '%s' was successfully delivered to '%s'".format(
+                          message.toMD5(),
+                          linkValue.uri.toString()
+                        )
                       )
-                    )
-                    //TODO: remove message from messages map, update dedupe cache.
-                  }}
-              )
+                    }}
+                )
+              } catch {
+                case e:Exception =>
+                  wqLog.warn("Exception occurred while while attempting to deliver Message '%s' to '%s".format(
+                    message.toMD5(),
+                    linkValue.uri.toString()
+                  ), e)
+                  // TODO: Requeue message!!
+              }
           }
       }
 

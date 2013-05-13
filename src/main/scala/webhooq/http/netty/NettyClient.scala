@@ -133,7 +133,6 @@ case class NettyResponseHandler(val channelGroup:ChannelGroup, val responseCallb
 
   override def exceptionCaught(ctx:ChannelHandlerContext, e:ExceptionEvent):Unit = {
     wqLog.warn("ResponseHandler.exceptionCaught", e.getCause)
-    e.getCause.printStackTrace()
     e.getChannel.close()
   }
 

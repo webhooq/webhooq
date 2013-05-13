@@ -338,8 +338,13 @@ class RequestHandler ( val allChannels:ChannelGroup) extends SimpleChannelHandle
       val arrivedAt = (ArrivedAt.name -> System.currentTimeMillis().toString)
 
       val headers = (collectionAsScalaIterableConverter(request.getHeaders).asScala.foldLeft(scala.collection.mutable.Map.empty[String,String]) { (acc,e) =>
-        if (e.getKey == HttpHeader.ACCEPT.name) acc
-        else acc + (e.getKey -> e.getValue)
+        e.getKey match {
+          case HttpHeader.ACCEPT.name => acc
+          case HttpHeader.HOST.name => acc
+          case _ => acc + (e.getKey -> e.getValue)
+        }
+//        if (e.getKey == HttpHeader.ACCEPT.name) acc
+//        else acc + (e.getKey -> e.getValue)
       }) + arrivedAt
 
       val exchangeRef = ExchangeRef(vhost,exchange)
